@@ -13,7 +13,7 @@
 //******************************* Include Files ********************************
 #include "common.h"
 #include "devicelog.h"
-#include "fileoperation.h"
+#include "fileOperation.h"
 
 //******************************* Local Types **********************************
 
@@ -39,7 +39,7 @@ int main()
     int8 *cFileName = "task.bin";
     int8 *cMode = "ab";
 
-    if (true == fileoperationCheck(&pstFile, &cFileName, &cMode, &pstHead))
+    if (true == fileoperationCheck(&pstFile, cFileName, cMode, &pstHead))
     {
         while ((ucChoice == 'y') || (ucChoice == 'Y'))
         {

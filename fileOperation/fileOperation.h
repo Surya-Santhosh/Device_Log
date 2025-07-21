@@ -13,7 +13,6 @@
 
 //******************************* Include Files ********************************
 #include "common.h"
-#include "devicelog.h"
 
 //******************************* Global Types ********************************* 
 
@@ -23,15 +22,17 @@
 //***************************** Global Variables ******************************* 
 
 //**************************** Forward Declarations **************************** 
-bool fileoperationOpen(FILE **pstFile, int8 *cFileName, int8 *cMode);
-bool fileoperationClose(FILE **ppstFile);
-bool fileoperationCheck(FILE **ppstFile, int8 *cFileName, int8 *cMode, 
-                            NODE **ppstHead);
-bool fileoperationFread(DEVICE_INFO *stDeviceInfo, FILE **ppstFile);
-bool fileoperationWrite(NODE **pstcurrent, FILE **ppstFile);
+bool fileOperationOpen(FILE *pstFile, int8 *cFileName, int8 *cMode);
+bool fileOperationClose(FILE *ppstFile);
+bool fileOperationCheck(FILE *ppstFile, int8 *cFileName, int8 *cMode, 
+                        int8 *ppstHead);
+bool fileOperationFread(int8 *stDeviceInfo, int8 cSize, int8 cCount, 
+                        FILE *ppstFile);
+bool fileOperationWrite(int8 *pstcurrent, int8 cSize, int8 cCount, 
+                        FILE *ppstFile);
 
 //*********************** Inline Method Implementations ************************ 
 
 #endif 
-// _DEVICELOG_H_ 
+// _FILEOPERATION_H_ 
 // EOF 

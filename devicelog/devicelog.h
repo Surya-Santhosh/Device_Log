@@ -13,7 +13,6 @@
 
 //******************************* Include Files ********************************
 #include "common.h"
-#include "fileoperation.h"
 
 //******************************* Global Types ********************************* 
 typedef struct DEVICE_INFO

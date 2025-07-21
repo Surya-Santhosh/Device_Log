@@ -11,7 +11,7 @@
 //******************************************************************************
 
 //******************************* Include Files ********************************
-#include "fileoperation.h"
+#include "fileOperation.h"
 #include "devicelog.h"
 
 //******************************* Local Types **********************************
@@ -21,7 +21,7 @@
 //***************************** Local Variables ********************************
 
 //****************************** Local Functions *******************************
-static bool fileoperationFseek(FILE **ppstFile);
+static bool fileOperationFseek(FILE *ppstFile, int8 cOffset, int8 cPosition);
 
 //****************************.fileoperationRead.*******************************
 // Purpose : To open the file.
@@ -32,13 +32,13 @@ static bool fileoperationFseek(FILE **ppstFile);
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationOpen(FILE **ppstFile, int8 *cFileName, int8 *cMode)
+bool fileOperationOpen(FILE *ppstFile, int8 *cFileName, int8 *cMode)
 {
     bool blResult = false;
 
-    *ppstFile = fopen(cFileName, cMode);
+    ppstFile = fopen(cFileName, cMode);
 
-    if (NULL != ppstFile)
+    if (NULL == ppstFile)
     {
         printf("Unable to open file.");
     }
@@ -57,13 +57,13 @@ bool fileoperationOpen(FILE **ppstFile, int8 *cFileName, int8 *cMode)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationClose(FILE **ppstFile)
+bool fileOperationClose(FILE *ppstFile)
 {
     bool blResult = false;
 
     if (NULL != ppstFile)
     {
-        if (0 != fclose(*ppstFile))
+        if (0 != fclose(ppstFile))
         {
             printf("Unable to closing file.");
         }
@@ -83,13 +83,13 @@ bool fileoperationClose(FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationFseek(FILE **ppstFile)
+static bool fileOperationFseek(FILE *ppstFile, int8 cOffset, int8 cPosition)
 {
     bool blResult = false;
 
     if (NULL != ppstFile)
     {
-        if (0 != fseek(*ppstFile, 0, SEEK_SET))
+        if (0 != fseek(ppstFile, cOffset, cPosition))
         {
             printf("Fseek failed.");
         }
@@ -111,13 +111,14 @@ bool fileoperationFseek(FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationFread(DEVICE_INFO *stDeviceInfo, FILE **ppstFile)
+bool fileOperationFread(int8 *stDeviceInfo, int8 cSize, int8 cCount, 
+                        FILE *ppstFile)
 {
     bool blResult = false;
 
     if (NULL != ppstFile)
     {
-        while (0 != fread(&stDeviceInfo, sizeof(DEVICE_INFO), 1, *ppstFile))
+        while (0 != fread(&stDeviceInfo, cSize, cCount, ppstFile))
         {
            blResult = true;
         }
@@ -135,15 +136,15 @@ bool fileoperationFread(DEVICE_INFO *stDeviceInfo, FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationWrite(NODE **pstcurrent, FILE **ppstFile)
+bool fileOperationWrite(int8 *pstcurrent, int8 cSize, int8 cCount, 
+                        FILE *ppstFile)
 {
     bool blResult = false;
     DEVICE_INFO stDeviceInfo;
 
     if (NULL != ppstFile && NULL != pstcurrent)
     {
-        if (0 == fwrite(&pstcurrent, sizeof(DEVICE_INFO), 1, 
-                        *ppstFile))
+        if (0 == fwrite(&pstcurrent, cSize, cCount, ppstFile))
         {
             printf("Fwrite failed.");
         }
@@ -165,18 +166,20 @@ bool fileoperationWrite(NODE **pstcurrent, FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileoperationCheck(FILE **ppstFile, int8 *cFileName, int8 *cMode, 
-                            NODE **ppstHead)
+bool fileOperationCheck(FILE *ppstFile, int8 *cFileName, int8 *cMode, 
+                        int8 *pstHead)
 {
     bool blResult = false;
+    int8 cOffset = 0;
+    int8 cPosition = SEEK_SET;
 
-    if (true == fileoperationOpen(ppstFile, cFileName, cMode))
+    if (true == fileOperationOpen(ppstFile, cFileName, cMode))
     {
-        if (true == fileoperationFseek(ppstFile))
+        if (true == fileOperationFseek(ppstFile, cOffset, cPosition))
         {
-            if (true == devicelogReadFromFile(ppstHead, ppstFile))
+            if (true == devicelogReadFromFile(pstHead, ppstFile))
             {
-                if (true == fileoperationClose(ppstFile))
+                if (true == fileOperationClose(ppstFile))
                 {
                     blResult = true;
                 }
@@ -186,3 +189,5 @@ bool fileoperationCheck(FILE **ppstFile, int8 *cFileName, int8 *cMode,
 
     return blResult;
 }
+
+//EOF

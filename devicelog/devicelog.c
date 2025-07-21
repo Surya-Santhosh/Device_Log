@@ -37,11 +37,13 @@ static bool devicelogGetNextUID(uint16 *punUID);
 bool devicelogReadFromFile(NODE **ppstHead, FILE **ppstFile)
 {
     bool blResult = false;
+    int8 cSize = sizeof(DEVICE_INFO);
+    int8 cCount = 1;
     DEVICE_INFO stDeviceInfo;
 
     if ((NULL != ppstHead) && (NULL != ppstFile))
     {
-        if (true == fileoperationFread(&stDeviceInfo, &ppstFile))
+        if (true == fileOperationFread(&stDeviceInfo, cSize, cCount, ppstFile))
         {
             if (true != devicelogAddToList(ppstHead, stDeviceInfo))
             {
@@ -170,20 +172,23 @@ static bool devicelogFileUpdate(NODE **ppstHead, FILE **ppstFile)
     NODE *pstcurrent = *ppstHead;
     int8 *cFileName = "task.bin";
     int8 *cMode = "wb";
+    int8 cSize = sizeof(DEVICE_INFO);
+    int8 cCount = 1;
 
-    if (true == fileoperationOpen(ppstFile, cFileName, cMode))
+    if (true == fileOperationOpen(ppstFile, cFileName, cMode))
     {
         if ((NULL != *ppstHead) && (NULL != *ppstFile))
         {
             while (pstcurrent != NULL)
             {
-                if (true == fileoperationWrite(&pstcurrent, &ppstFile))
+                if (true == fileOperationWrite(pstcurrent, cSize, cCount, 
+                        ppstFile))
                 {
                     pstcurrent = pstcurrent->pstNext;
                 }
             }
 
-            fileoperationClose(ppstFile);
+            fileOperationClose(ppstFile);
 
             blResult = true;
         }
@@ -356,7 +361,7 @@ bool devicelogPrintAllDevices(NODE **ppstHead, FILE **ppstFile)
     int8 *cFileName = "task.bin";
     int8 *cMode = "wb";
 
-    if (true == fileoperationOpen(ppstFile, cFileName, cMode))
+    if (true == fileOperationOpen(ppstFile, cFileName, cMode))
     {
         if (*ppstFile != NULL)
         {
@@ -372,7 +377,7 @@ bool devicelogPrintAllDevices(NODE **ppstHead, FILE **ppstFile)
                 ucdataFound = 1;
             }
 
-            fileoperationClose(ppstFile);
+            fileOperationClose(ppstFile);
 
             if (1 == ucdataFound)
             {
@@ -426,14 +431,17 @@ static bool devicelogGetNextUID(uint16 *punUID)
     FILE *pstUIDFile = NULL;
     int8 *cFileName = "uid.txt";
     int8 *cMode = "rb";
+    int8 cSize = sizeof(uint16);
+    int8 cCount = 1;
 
-    if (true == fileoperationOpen(&pstUIDFile, cFileName, cMode))
+    if (true == fileOperationOpen(&pstUIDFile, cFileName, cMode))
     {
         if (NULL != punUID)
         {
             if (NULL != pstUIDFile)
             {
-                if (1 == fread(punUID, sizeof(uint16), 1, pstUIDFile))
+                if (true == fileOperationFread(punUID, cSize, cCount, 
+                                               pstUIDFile))
                 {
                     (*punUID)++;
                 }
@@ -453,7 +461,8 @@ static bool devicelogGetNextUID(uint16 *punUID)
 
             if (NULL != pstUIDFile)
             {
-                if (1 == fwrite(punUID, sizeof(uint16), 1, pstUIDFile))
+                if (true == fileOperationWrite(punUID, cSize, cCount, 
+                                               pstUIDFile))
                 {
                     blResult = true;
                 }
