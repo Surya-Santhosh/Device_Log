@@ -13,6 +13,7 @@
 
 //******************************* Include Files ********************************
 #include "common.h"
+#include "fileoperation.h"
 
 //******************************* Global Types ********************************* 
 typedef struct DEVICE_INFO
@@ -21,8 +22,7 @@ typedef struct DEVICE_INFO
     uint16 unDeviceID;
     uint16 unVentorID;
     uint8 ucName[MAX_CHAR_SIZE];
-    //char is used for string operations.
-    char ucState[MAX_CHAR_SIZE];
+    int8 ucState[MAX_CHAR_SIZE];
 }DEVICE_INFO;
 
 typedef struct NODE
@@ -31,7 +31,11 @@ typedef struct NODE
     struct NODE* pstNext;
 }NODE;
 
-typedef bool (*Function)(NODE **, FILE **);
+typedef struct DEVICE_MANAGEMENT
+{
+    int8 cMenu[MAX_CHAR_SIZE];
+    bool (*pFunction)(NODE **, FILE **);
+}DEVICE_MANAGEMENT;
 
 //***************************** Global Constants ******************************* 
 
@@ -39,11 +43,12 @@ typedef bool (*Function)(NODE **, FILE **);
 
 //**************************** Forward Declarations **************************** 
 bool devicelogReadFromFile(NODE **ppstHead, FILE **pstFile);
-bool devicelogPrintAllDevices(FILE **pstFile);
+bool devicelogPrintAllDevices(NODE **ppstHead, FILE **ppstFile);
 bool devicelogAddNewtotheList(NODE **ppstHead, FILE **pstFile);
 bool devicelogSearchFromList(NODE **ppstHead, FILE **pstFile);
 bool devicelogDeleteFromList(NODE **ppstHead, FILE **pstFile);
 bool devicelogFreeList (NODE **ppstHead);
+bool devicelogMenuHandler(NODE **pstHead, FILE **pstFile);
 
 //*********************** Inline Method Implementations ************************ 
 

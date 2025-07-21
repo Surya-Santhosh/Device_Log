@@ -13,6 +13,7 @@
 //******************************* Include Files ********************************
 #include "common.h"
 #include "devicelog.h"
+#include "fileoperation.h"
 
 //******************************* Local Types **********************************
 
@@ -34,60 +35,22 @@ int main()
 {
     NODE *pstHead = NULL;
     FILE *pstFile = NULL;
-
     uint8 ucChoice = 'y';
-    uint8 ucOperation = 0;
+    int8 *cFileName = "task.bin";
+    int8 *cMode = "ab";
 
-    pstFile = fopen("./task.bin", "ab");
-
-    if (pstFile != NULL)
+    if (true == fileoperationCheck(&pstFile, &cFileName, &cMode, &pstHead))
     {
-        if (0 == fseek(pstFile, 0, SEEK_SET))
+        while ((ucChoice == 'y') || (ucChoice == 'Y'))
         {
-            if (true == devicelogReadFromFile(&pstHead, &pstFile))
+            if (true == devicelogMenuHandler(&pstHead, &pstFile))
             {
-                fclose(pstFile);
+                printf("\nIf you want to continue (Y/N): ");
+                while(getchar() != '\n');
+                scanf("%c", &ucChoice);
 
-                Function FunctionTable[] = { devicelogAddNewtotheList, 
-                                             devicelogSearchFromList, 
-                                             devicelogDeleteFromList };
-
-                while ((ucChoice == 'y') || (ucChoice == 'Y'))
-                {
-                    printf("\n****Device Managment Menu****\n");
-                    printf("\n0 : Add New Devices"
-                           "\n1 : Search for Devices"
-                           "\n2 : Delete devices"
-                           "\n3 : Display all Devices\n");
-                    printf("\nEnter your choice : ");
-                    scanf("%hhd", &ucOperation);
-
-                    if (TOTAL_OPERATIONS < ucOperation)
-                    {
-                        printf("\nInvalid option.\n");
-                        while(getchar() != '\n');
-                        continue;
-                    }
-                    else if (THIRD_OPERATION == ucOperation)
-                    {
-                        if (true != devicelogPrintAllDevices(&pstFile))
-                        {
-                            printf("\nBin file is empty.\n");
-                        }
-                    }
-                    else
-                    {
-                        FunctionTable[ucOperation](&pstHead, &pstFile);
-                    }
-
-                    printf("\nIf you want to continue (Y/N): ");
-                    while(getchar() != '\n');
-                    scanf("%c", &ucChoice);
-
-                    printf("\x1b[H"); // Move Cursor to top-left
-                    printf("\x1b[J"); // clear screen
-
-                }
+                printf("\x1b[H"); // Move Cursor to top-left
+                printf("\x1b[J"); // clear screen
             }
         }
     }

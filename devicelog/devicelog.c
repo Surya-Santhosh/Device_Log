@@ -34,15 +34,14 @@ static bool devicelogGetNextUID(uint16 *punUID);
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool devicelogReadFromFile(NODE **ppstHead, FILE **pstFile)
+bool devicelogReadFromFile(NODE **ppstHead, FILE **ppstFile)
 {
     bool blResult = false;
-
     DEVICE_INFO stDeviceInfo;
 
-    if ((NULL != ppstHead) && (NULL != pstFile))
+    if ((NULL != ppstHead) && (NULL != ppstFile))
     {
-        while(0 != fread(&stDeviceInfo, sizeof(DEVICE_INFO), 1, *pstFile))
+        if (true == fileoperationFread(&stDeviceInfo, &ppstFile))
         {
             if (true != devicelogAddToList(ppstHead, stDeviceInfo))
             {
@@ -59,7 +58,7 @@ bool devicelogReadFromFile(NODE **ppstHead, FILE **pstFile)
 //************************.devicelogAddToList.**********************************
 // Purpose : Add a device record to the linked list.
 // Inputs  : ppstHead      - Pointer to the head node of the linked list.
-//           stDeviceInfo  - Structure containing device information..
+//           stDeviceInfo  - Structure containing device information.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
@@ -67,11 +66,10 @@ bool devicelogReadFromFile(NODE **ppstHead, FILE **pstFile)
 static bool devicelogAddToList(NODE **ppstHead, DEVICE_INFO stDeviceInfo)
 {
     bool blResult = false;
+    NODE* pstNewNode = (NODE*)malloc(sizeof(NODE));
 
     if (NULL != ppstHead)
     {
-        NODE* pstNewNode = (NODE*)malloc(sizeof(NODE));
-
         if (pstNewNode != NULL)
         {
             pstNewNode->stDeviceInfo = stDeviceInfo;
@@ -95,15 +93,14 @@ static bool devicelogAddToList(NODE **ppstHead, DEVICE_INFO stDeviceInfo)
 static bool devicelogGetDeviceInfo(NODE **ppstHead)
 {
     //char is used for string operations.
-    char *pState[] = {"DISABLED", "NOT_CONNECTED", "RUNNING"};
-
+    int8 *pState[] = {STATE_DISABLED, STATE_NOT_CONNECTED, STATE_RUNNING};
     bool blResult = false;
     uint8 ucStateInput = 0;
     uint8 ucdataFound = 0;
     uint8 ucNewDeviceID = 0;
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
-
+    NODE *pstCurrent = *ppstHead;
     DEVICE_INFO stDeviceInfo;
 
     if (NULL != ppstHead)
@@ -118,8 +115,6 @@ static bool devicelogGetDeviceInfo(NODE **ppstHead)
                 printf("\nDevice details\n");
                 printf("\nEnter DeviceID : ");
                 scanf("%hhu", &ucNewDeviceID);
-
-                NODE *pstCurrent = *ppstHead;
 
                 while (NULL != pstCurrent)
                 {
@@ -169,26 +164,29 @@ static bool devicelogGetDeviceInfo(NODE **ppstHead)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-static bool devicelogFileUpdate(NODE **ppstHead, FILE **pstFile)
+static bool devicelogFileUpdate(NODE **ppstHead, FILE **ppstFile)
 {
     bool blResult = false;
+    NODE *pstcurrent = *ppstHead;
+    int8 *cFileName = "task.bin";
+    int8 *cMode = "wb";
 
-    *pstFile = fopen("./task.bin", "wb");
-
-    if ((NULL != *ppstHead) && (NULL != *pstFile))
+    if (true == fileoperationOpen(ppstFile, cFileName, cMode))
     {
-        NODE *pstcurrent = *ppstHead;
-
-        while (pstcurrent != NULL)
+        if ((NULL != *ppstHead) && (NULL != *ppstFile))
         {
-            fwrite(&pstcurrent->stDeviceInfo, sizeof(DEVICE_INFO), 1, *pstFile);
+            while (pstcurrent != NULL)
+            {
+                if (true == fileoperationWrite(&pstcurrent, &ppstFile))
+                {
+                    pstcurrent = pstcurrent->pstNext;
+                }
+            }
 
-            pstcurrent = pstcurrent->pstNext;
+            fileoperationClose(ppstFile);
+
+            blResult = true;
         }
-
-        fclose(*pstFile);
-
-        blResult = true;
     }
 
     return blResult;
@@ -232,6 +230,8 @@ bool devicelogSearchFromList(NODE **ppstHead, FILE **pstFile)
     bool blResult = false;
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
+    uint16 unSearchDeviceID = 0;
+    NODE *pstCurrent = *ppstHead;
 
     if (NULL != ppstHead && NULL != pstFile)
     {
@@ -240,12 +240,8 @@ bool devicelogSearchFromList(NODE **ppstHead, FILE **pstFile)
 
         for (ucIndex = 0; ucIndex < ucNumberofDevices; ucIndex++)
         {
-            uint16 unSearchDeviceID = 0;
-
             printf("\nEnter the DeviceID : ");
             scanf("%hu", &unSearchDeviceID);
-
-            NODE *pstCurrent = *ppstHead;
 
             while (pstCurrent != NULL)
             {
@@ -285,6 +281,10 @@ bool devicelogDeleteFromList(NODE **ppstHead, FILE **pstFile)
     bool blResult = false;
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
+    uint16 unDeleteDeviceID = 0;
+    uint8 ucFlag = 0;
+    NODE *pstCurrent = *ppstHead;
+    NODE *pstPrevious = NULL;
 
     if (NULL != ppstHead && NULL != pstFile)
     {
@@ -293,14 +293,8 @@ bool devicelogDeleteFromList(NODE **ppstHead, FILE **pstFile)
 
         for (ucIndex = 0; ucIndex < ucNumberofDevices; ucIndex++)
         {
-            uint16 unDeleteDeviceID = 0;
-            uint8 ucFlag = 0;
-
             printf("\nEnter the DeviceID : ");
             scanf("%hd",&unDeleteDeviceID);
-
-            NODE *pstCurrent = *ppstHead;
-            NODE *pstPrevious = NULL;
 
             while (NULL != pstCurrent)
             {
@@ -354,35 +348,37 @@ bool devicelogDeleteFromList(NODE **ppstHead, FILE **pstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool devicelogPrintAllDevices(FILE **pstFile)
+bool devicelogPrintAllDevices(NODE **ppstHead, FILE **ppstFile)
 {
     bool blResult = false;
     DEVICE_INFO stDeviceInfo;
+    uint8 ucdataFound = 0;
+    int8 *cFileName = "task.bin";
+    int8 *cMode = "wb";
 
-    *pstFile = fopen("./task.bin", "rb");
-
-    if (*pstFile != NULL)
+    if (true == fileoperationOpen(ppstFile, cFileName, cMode))
     {
-        uint8 ucdataFound = 0;
-
-        printf("\n ****Device List**** \n\n");
-
-        while (1 == fread(&stDeviceInfo, sizeof(DEVICE_INFO), 1, *pstFile))
+        if (*ppstFile != NULL)
         {
-            printf("UID : %hu | DeviceID : %hu | VentorID : %hu "
-                   "| Name : %s | State : %s\n", stDeviceInfo.unUID, 
-                   stDeviceInfo.unDeviceID, stDeviceInfo.unVentorID, 
-                   stDeviceInfo.ucName, stDeviceInfo.ucState);
+            printf("\n ****Device List**** \n\n");
 
-            ucdataFound = 1;
+            while (1 == fread(&stDeviceInfo, sizeof(DEVICE_INFO), 1, *ppstFile))
+            {
+                printf("UID : %hu | DeviceID : %hu | VentorID : %hu "
+                    "| Name : %s | State : %s\n", stDeviceInfo.unUID, 
+                    stDeviceInfo.unDeviceID, stDeviceInfo.unVentorID, 
+                    stDeviceInfo.ucName, stDeviceInfo.ucState);
+
+                ucdataFound = 1;
+            }
+
+            fileoperationClose(ppstFile);
+
+            if (1 == ucdataFound)
+            {
+                blResult = true;
+            } 
         }
-
-        fclose(*pstFile);
-
-        if (1 == ucdataFound)
-        {
-            blResult = true;
-        } 
     }
 
     return blResult;
@@ -398,12 +394,11 @@ bool devicelogPrintAllDevices(FILE **pstFile)
 bool devicelogFreeList(NODE **ppstHead)
 {
     bool blResult = false;
+    NODE *pstCurrent = *ppstHead;
+    NODE *pstTemp = NULL;
 
     if (NULL != ppstHead)
     {
-        NODE *pstCurrent = *ppstHead;
-        NODE *pstTemp = NULL;
-
         while (NULL != pstCurrent)
         {
             pstTemp = pstCurrent->pstNext;
@@ -428,39 +423,98 @@ bool devicelogFreeList(NODE **ppstHead)
 static bool devicelogGetNextUID(uint16 *punUID)
 {
     bool blResult = false;
+    FILE *pstUIDFile = NULL;
+    int8 *cFileName = "uid.txt";
+    int8 *cMode = "rb";
 
-    if (NULL != punUID)
+    if (true == fileoperationOpen(&pstUIDFile, cFileName, cMode))
     {
-        FILE *pstUIDFile = fopen("./uid.txt", "rb");
-
-        if (NULL != pstUIDFile)
+        if (NULL != punUID)
         {
-            if (1 == fread(punUID, sizeof(uint16), 1, pstUIDFile))
+            if (NULL != pstUIDFile)
             {
-                (*punUID)++;
+                if (1 == fread(punUID, sizeof(uint16), 1, pstUIDFile))
+                {
+                    (*punUID)++;
+                }
+                else
+                {
+                    *punUID = 1; 
+                }
+
+                fclose(pstUIDFile);
             }
             else
             {
                 *punUID = 1; 
             }
 
-            fclose(pstUIDFile);
+            pstUIDFile = fopen("uid.txt", "wb");
+
+            if (NULL != pstUIDFile)
+            {
+                if (1 == fwrite(punUID, sizeof(uint16), 1, pstUIDFile))
+                {
+                    blResult = true;
+                }
+
+                fclose(pstUIDFile);
+            }
+        }
+    }
+
+    return blResult;
+}
+
+//**************************.devicelogMenuHandler.******************************
+// Purpose : Generate the next UID.
+// Inputs  : punUID - Pointer to store the UID.
+// Outputs : None
+// Return  : blResult
+// Notes   : None
+//******************************************************************************
+bool devicelogMenuHandler(NODE **ppstHead, FILE **ppstFile)
+{
+    bool blResult = false;
+    uint8 ucIndex = 0;
+    uint8 ucOperation = 0;
+    DEVICE_MANAGEMENT stFunctionTable[] = 
+    {
+        {"Add New Devices", devicelogAddNewtotheList},
+        {"Search for Devices", devicelogSearchFromList},
+        {"Delete devices", devicelogDeleteFromList},
+        {"Display all Devices", devicelogPrintAllDevices}
+    };
+
+    if (NULL != ppstHead && NULL != ppstFile)
+    {
+        printf("\n****Device Managment Menu****\n");
+        for (ucIndex; ucIndex < TOTAL_OPERATIONS; ucIndex++)
+        {
+            printf("%d : %s" , ucIndex, stFunctionTable[ucIndex].cMenu);
+        }
+
+        printf("\nEnter your choice : ");
+        scanf("%hhd", &ucOperation);
+
+        if (TOTAL_OPERATIONS < ucOperation)
+        {
+            printf("\nInvalid option.\n");
+            while(getchar() != '\n');
+            blResult = true;
+        }
+        else if (THIRD_OPERATION == ucOperation)
+        {
+            if (true != devicelogPrintAllDevices(ppstHead, ppstFile))
+            {
+                printf("\nBin file is empty.\n");
+                blResult = true;
+            }
         }
         else
         {
-            *punUID = 1; 
-        }
-
-        pstUIDFile = fopen("./uid.txt", "wb");
-
-        if (NULL != pstUIDFile)
-        {
-            if (1 == fwrite(punUID, sizeof(uint16), 1, pstUIDFile))
-            {
-                blResult = true;
-            }
-
-            fclose(pstUIDFile);
+            stFunctionTable[ucOperation].pFunction(ppstHead, ppstFile);
+            blResult = true;
         }
     }
 

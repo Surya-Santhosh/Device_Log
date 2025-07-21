@@ -20,11 +20,16 @@
 typedef unsigned short uint16;
 typedef unsigned char uint8;
 typedef unsigned long uint32;
+typedef signed char int8;
 
 //***************************** Global Constants ******************************* 
-#define MAX_CHAR_SIZE        (20)
-#define TOTAL_OPERATIONS     (3)
-#define THIRD_OPERATION      (3)
+#define MAX_CHAR_SIZE         (20)
+#define TOTAL_OPERATIONS      (4)
+#define THIRD_OPERATION       (3)
+#define MAX_MENU_SIZE         (4)
+#define STATE_DISABLED        ("DISABLED")
+#define STATE_NOT_CONNECTED   ("NOT_CONNECTED")
+#define STATE_RUNNING         ("RUNNING")
 
 //***************************** Global Variables ******************************* 
 
