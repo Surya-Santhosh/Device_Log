@@ -1,4 +1,4 @@
-//******************************* DeviceLog ************************************
+//***************************** fileoperation **********************************
 // Copyright (c) 2025 Trenser Technology Solutions
 // All Rights Reserved 
 //****************************************************************************** 
@@ -22,17 +22,17 @@
 //***************************** Global Variables ******************************* 
 
 //**************************** Forward Declarations **************************** 
-bool fileOperationOpen(FILE *pstFile, int8 *cFileName, int8 *cMode);
-bool fileOperationClose(FILE *ppstFile);
-bool fileOperationCheck(FILE *ppstFile, int8 *cFileName, int8 *cMode, 
-                        int8 *ppstHead);
+bool fileOperationOpen(FILE **pstFile, int8 *cFileName, int8 *cMode);
+bool fileOperationClose(FILE **ppstFile);
+bool fileOperationOpenwithFseek(FILE **ppstFile, int8 *cFileName, int8 *cMode);
 bool fileOperationFread(int8 *stDeviceInfo, int8 cSize, int8 cCount, 
-                        FILE *ppstFile);
-bool fileOperationWrite(int8 *pstcurrent, int8 cSize, int8 cCount, 
-                        FILE *ppstFile);
+                        FILE *pstFile);
+bool fileOperationWrite(int8 cSize, int8 cCount, FILE *pstFile, 
+                        int8 *pstcurrent);
 
 //*********************** Inline Method Implementations ************************ 
 
 #endif 
 // _FILEOPERATION_H_ 
 // EOF 
+

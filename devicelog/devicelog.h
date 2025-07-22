@@ -43,14 +43,16 @@ typedef struct DEVICE_MANAGEMENT
 //**************************** Forward Declarations **************************** 
 bool devicelogReadFromFile(NODE **ppstHead, FILE **pstFile);
 bool devicelogPrintAllDevices(NODE **ppstHead, FILE **ppstFile);
-bool devicelogAddNewtotheList(NODE **ppstHead, FILE **pstFile);
+bool devicelogAddNew(NODE **ppstHead, FILE **pstFile);
 bool devicelogSearchFromList(NODE **ppstHead, FILE **pstFile);
 bool devicelogDeleteFromList(NODE **ppstHead, FILE **pstFile);
 bool devicelogFreeList (NODE **ppstHead);
-bool devicelogMenuHandler(NODE **pstHead, FILE **pstFile);
+bool devicelogManager(NODE **pstHead, FILE **pstFile);
 
 //*********************** Inline Method Implementations ************************ 
 
 #endif 
 // _DEVICELOG_H_ 
 // EOF 
+
+

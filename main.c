@@ -36,14 +36,12 @@ int main()
     NODE *pstHead = NULL;
     FILE *pstFile = NULL;
     uint8 ucChoice = 'y';
-    int8 *cFileName = "task.bin";
-    int8 *cMode = "ab";
 
-    if (true == fileoperationCheck(&pstFile, cFileName, cMode, &pstHead))
+    if (true == devicelogReadFromFile(&pstHead, &pstFile))
     {
         while ((ucChoice == 'y') || (ucChoice == 'Y'))
         {
-            if (true == devicelogMenuHandler(&pstHead, &pstFile))
+            if (true == devicelogManager(&pstHead, &pstFile))
             {
                 printf("\nIf you want to continue (Y/N): ");
                 while(getchar() != '\n');
@@ -60,3 +58,4 @@ int main()
     return 0;
 }
 // EOF
+
