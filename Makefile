@@ -1,12 +1,14 @@
 CC = gcc
-SRC = $(wildcard *.c)
+SRC = $(wildcard *.c devicelog/*.c fileOperation/*.c memmoryHandle/*.c)
 ASM = $(patsubst %.c,release/%.s,$(notdir $(SRC)))
 OBJ = $(patsubst %.c,release/%.o,$(notdir $(SRC)))
 DBG = $(patsubst %.c,debug/%.o,$(notdir $(SRC)))
 WFLAGS = -Wall -Werror -Wextra 
 # Included directories
-INCLUDE_DIR += -Idevicelog -I.
+# DEPS = common.h commonheader.h
+INCLUDE_DIR += -Idevicelog -IfileOperation -ImemmoryHandle -I.
 FOLDER = release debug
+VPATH = devicelog fileOperation memmoryHandle
 
 # create release and debug folders
 create_dir:
@@ -14,7 +16,7 @@ create_dir:
 
 # To create executable file in release folder
 all : linux 
-	$(CC) $(WFLAGS) $(INCLUDE_DIR) $(OBJ) -o release/DeviceLog.exe
+	$(CC) $(WFLAGS) $(INCLUDE_DIR) $(OBJ) -o DeviceLog.exe
 
 # To create object,assembly,debug files
 linux : files_asm files_obj files_dbg

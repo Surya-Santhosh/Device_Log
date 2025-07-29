@@ -1,4 +1,4 @@
-//********************************** AppTimer **********************************
+//******************************* common ***************************************
 // Copyright (c) 2025 Trenser Technology Solutions
 // All Rights Reserved 
 //****************************************************************************** 
@@ -7,37 +7,49 @@
 // Note    : None
 // 
 //******************************************************************************
-#ifndef _COMMON_H_
-#define _COMMON_H_ 
+#ifndef COMMON_H
+#define COMMON_H 
 
-//******************************* Include Files ******************************** 
+//**************************** Include Files ***********************************
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <sys/stat.h>
 
-//******************************* Global Types *********************************
+//**************************** Global Types ************************************
 typedef unsigned short uint16;
 typedef unsigned char uint8;
 typedef unsigned long uint32;
-typedef signed char int8;
+typedef char int8;
+typedef signed short int16;
 
-//***************************** Global Constants ******************************* 
+//************************* Global Constants ***********************************
 #define MAX_CHAR_SIZE         (20)
 #define TOTAL_OPERATIONS      (4)
-#define THIRD_OPERATION       (3)
-#define MAX_MENU_SIZE         (4)
+#define TOTAL_STATE           (3)
+#define UID_INITIAL_VALUE     (1)
+#define READ_COUNT            (1)
+#define WRITE_COUNT           (1)
+#define NULL_CHARACTER        ('\0')
+#define NEWLINE_CHARACTER     ('\n')
 #define STATE_DISABLED        ("DISABLED")
 #define STATE_NOT_CONNECTED   ("NOT_CONNECTED")
 #define STATE_RUNNING         ("RUNNING")
+#define WRITE_MODE            ("wb")
+#define READ_MODE             ("rb")
+#define APPEND_MODE           ("ab")
+#define BIN_FILENAME          ("task.bin")
+#define UID_FILENAME          ("UID.txt")
 
-//***************************** Global Variables ******************************* 
+//************************* Global Variables *********************************** 
 
-//**************************** Forward Declarations ****************************  
+//************************* Forward Declarations *******************************  
 
-//*********************** Inline Method Implementations ************************ 
+//************************ Inline Method Implementations *********************** 
 
 #endif 
-// _COMMON_H_ 
-// EOF 
 
+// COMMON_H 
+// EOF

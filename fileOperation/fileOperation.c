@@ -1,46 +1,45 @@
 //****************************** fileoperation *********************************
 // Copyright (c) 2025 Trenser Technology Solutions
-// All Rights Reserved
+// All Rights Reserved 
 //******************************************************************************
 // File    : fileoperation.c
-// Summary : Store and update device information using a linked list and a 
-//           binary file.
+// Summary : Wraper function for file operation such as fopen, fclose, fread, 
+//           fwrite, fseek.
 // Note    : None
 // Author  : Surya Santhosh
 // Date    : 15/July/2024
 //******************************************************************************
 
-//******************************* Include Files ********************************
+//************************ Include Files ***************************************
 #include "fileOperation.h"
-#include "devicelog.h"
 
 //******************************* Local Types **********************************
 
 //***************************** Local Constants ********************************
 
-//***************************** Local Variables ********************************
+//**************************** Local Variables *********************************
 
-//****************************** Local Functions *******************************
-static bool fileOperationFseek(FILE **ppstFile, int8 cOffset, int8 cPosition);
+//***************************** Local Functions ********************************
 
-//****************************.fileoperationRead.*******************************
+//***************************.fileOperationOpen.********************************
 // Purpose : To open the file.
 // Inputs  : pstFile - Pointer to the binary file.
-//         : cFileName -  Name of the file to be opened.
-//         : cMode - Mode of opeation.
+//         : pcFileName -  Name of the file to be opened.
+//         : pcMode - Mode of opeation.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationOpen(FILE **ppstFile, int8 *cFileName, int8 *cMode)
+bool fileOperationOpen(FILE **ppstFile, const char *pcFileName, 
+                       const char *pcMode)
 {
     bool blResult = false;
 
-    *ppstFile = fopen(cFileName, cMode);
+    *ppstFile = fopen(pcFileName, pcMode);
 
     if (NULL == ppstFile)
     {
-        printf("Unable to open file.");
+        printf("Unable to open file.\n");
     }
     else
     {
@@ -50,34 +49,7 @@ bool fileOperationOpen(FILE **ppstFile, int8 *cFileName, int8 *cMode)
     return blResult;
 }
 
-//****************************.fileoperationRead.*******************************
-// Purpose : To open the file.
-// Inputs  : pstFile - Pointer to the binary file.
-//         : cFileName -  Name of the file to be opened.
-//         : cMode - Mode of opeation.
-// Outputs : None
-// Return  : blResult
-// Notes   : None
-//******************************************************************************
-bool fileOperationOpen(FILE **ppstFile, int8 *cFileName, int8 *cMode)
-{
-    bool blResult = false;
-
-    *ppstFile = fopen(cFileName, cMode);
-
-    if (NULL == ppstFile)
-    {
-        printf("Unable to open file.");
-    }
-    else
-    {
-        blResult = true;
-    }
-
-    return blResult;
-}
-
-//****************************.fileoperationClose.******************************
+//***************************.fileoperationClose.*******************************
 // Purpose : To close file.
 // Inputs  : ppstFile - Pointer to the binary file 
 // Outputs : None
@@ -92,11 +64,12 @@ bool fileOperationClose(FILE **ppstFile)
     {
         if (0 != fclose(*ppstFile))
         {
-            printf("Unable to closing file.");
+            printf("Unable to closing file.\n");
         }
         else
         {
             *ppstFile = NULL;
+
             blResult = true;
         }
     }
@@ -104,7 +77,7 @@ bool fileOperationClose(FILE **ppstFile)
     return blResult;
 }
 
-//****************************.fileoperationFseek.******************************
+//*************************.fileoperationFseek.*********************************
 // Purpose : To move the file pointer to specific location.
 // Inputs  : ppstFile - Pointer to the binary file.
 //         : cOffset - It is the number of bytes to offset from the position.
@@ -113,7 +86,7 @@ bool fileOperationClose(FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-static bool fileOperationFseek(FILE **ppstFile, int8 cOffset, int8 cPosition)
+bool fileOperationFseek(FILE **ppstFile, uint8 cOffset, uint8 cPosition)
 {
     bool blResult = false;
 
@@ -121,7 +94,7 @@ static bool fileOperationFseek(FILE **ppstFile, int8 cOffset, int8 cPosition)
     {
         if (0 != fseek(*ppstFile, cOffset, cPosition))
         {
-            printf("Fseek failed.");
+            printf("Fseek failed.\n");
         }
         else
         {
@@ -132,80 +105,109 @@ static bool fileOperationFseek(FILE **ppstFile, int8 cOffset, int8 cPosition)
     return blResult;
 }
 
-//****************************.fileoperationFread.******************************
+//*************************.fileoperationFread.*********************************
 // Purpose : To read the data from the binary file.
-// Inputs  : pstFile - Pointer to the binary file 
-//         : stDeviceInfo  - Structure containing device information.
+// Inputs  : ppstFile - Pointer to the binary file 
+//         : pBuffer  - Structure containing device information.
 //         : cSize - The size in bytes of each element to be read.
 //         : cCount - The number of elements to read.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationFread(int8 *stDeviceInfo, int8 cSize, int8 cCount, 
-                        FILE *pstFile)
+bool fileOperationFread(void *pBuffer, uint8 cSize, FILE **ppstFile)
 {
     bool blResult = false;
+    uint16 ucReadCount = 0;
 
-    if (NULL != pstFile)
+    if (NULL != ppstFile && NULL != pBuffer)
     {
-        if (0 != fread(stDeviceInfo, cSize, cCount, pstFile))
+        ucReadCount = fread(pBuffer, cSize, WRITE_COUNT, *ppstFile);
+
+        if (WRITE_COUNT == ucReadCount)
         {
-           blResult = true;
+            blResult = true;
         }
     }
 
     return blResult;
 }
 
-//****************************.fileoperationWrite.******************************
+//**********************.fileoperationWrite.************************************
 // Purpose : To write data from the linked list to binary file.
 // Inputs  : pstFile - Pointer to the binary file 
-//         : stDeviceInfo  - Structure containing device information.
+//         : pBuffer  - Structure containing device information.
 //         : cSize - The size in bytes of each element to be read.
 //         : cCount - The number of elements to read.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationWrite(int8 cSize, int8 cCount, FILE *pstFile, 
-                        int8 *pstcurrent)
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pBuffer)
 {
     bool blResult = false;
+    uint16 ucWriteCount = 0;
 
-    if (NULL != pstFile && NULL != pstcurrent)
+    if (NULL != pstFile && NULL != pBuffer)
     {
-        if (0 == fwrite(pstcurrent, cSize, cCount, pstFile))
+        ucWriteCount = fwrite(pBuffer, cSize, WRITE_COUNT, pstFile);
+
+        if (WRITE_COUNT == ucWriteCount)
         {
-            printf("Fwrite failed.");
+            blResult = true;
         }
         else
         {
-            blResult = true;
+            printf("Fwrite failed.\n");
         }
     }
 
     return blResult;
 }
 
-//***********************fileOperationOpenwithFseek.****************************
-// Purpose : To write data from the linked list to binary file.
+//*******************.fileOperationAppendandWrite.******************************
+// Purpose : Append data from binary file then open with write mode.
 // Inputs  : pstFile - Pointer to the binary file.
-//         : stDeviceInfo  - Structure containing device information.
-//         : pstCurrent - Pointer to the node of the linked list.
+//         : pcFileName -  Name of the file to be opened.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationOpenwithFseek(FILE **ppstFile, int8 *cFileName, int8 *cMode)
+bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName)
 {
     bool blResult = false;
-    int8 cOffset = 0;
-    int8 cPosition = SEEK_SET;
 
-    if (true == fileOperationOpen(ppstFile, cFileName, cMode))
+    if (true == fileOperationOpen(ppstFile, pcFileName, APPEND_MODE))
     {
-        if (true == fileOperationFseek(ppstFile, cOffset, cPosition))
+        if (true != fileOperationClose(ppstFile))
+        {
+            printf("Failed to open file in append mode.\n");
+        }
+    }
+
+    if (true == fileOperationOpen(ppstFile, pcFileName, WRITE_MODE))
+    {
+        blResult = true;
+    }
+
+    return blResult;
+}
+
+//*******************.fileOperationReadwithFseek********************************
+// Purpose : To open binary file with read mode and reset the file pointer.
+// Inputs  : pstFile - Pointer to the binary file.
+//         : pcFileName -  Name of the file to be opened.
+// Outputs : None
+// Return  : blResult
+// Notes   : None
+//******************************************************************************
+bool fileOperationReadwithFseek(FILE **ppstFile, const char *pcFileName)
+{
+    bool blResult = false;
+
+    if (true == fileOperationOpen(ppstFile, pcFileName, READ_MODE))
+    {
+        if (true == fileOperationFseek(ppstFile, 0, SEEK_SET))
         {
             blResult = true;
         }
@@ -213,5 +215,6 @@ bool fileOperationOpenwithFseek(FILE **ppstFile, int8 *cFileName, int8 *cMode)
 
     return blResult;
 }
+
 
 //EOF

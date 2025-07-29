@@ -24,7 +24,11 @@ Output:
 release/main.o  
 realease/main.s  
 release/devicelog.o  
-realease/devicelog.s   
+realease/devicelog.s  
+realease/fileOperation.o  
+realease/fileOperation.s  
+realease/memmoryHandle.o  
+realease/memmoryHandle.s
 
 
 ### 2. Linux (Debug)
@@ -34,6 +38,8 @@ $ make debug
 Output:  
 debug/main.o  
 debug/devicelog.o  
+debug/fileOperation.o  
+debug/memmoryHandle.o 
 
 
 ### 5. Build All

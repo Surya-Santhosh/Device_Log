@@ -1,38 +1,38 @@
-//***************************** fileoperation **********************************
+//****************************** fileoperation *********************************
 // Copyright (c) 2025 Trenser Technology Solutions
 // All Rights Reserved 
-//****************************************************************************** 
+//******************************************************************************
 //
-// Summary : Store and update device information using a linked list and a 
-//           binary file.
+// Summary : Wraper function for file operation such as fopen, fclose, fread, 
+//           fwrite, fseek.
 // Note    : None
 // 
-//****************************************************************************** 
-#ifndef _FILEOPERATION_H_
-#define _FILEOPERATION_H_
+//******************************************************************************
+#ifndef FILEOPERATION_H
+#define FILEOPERATION_H
 
-//******************************* Include Files ********************************
-#include "common.h"
+//**************************** Include Files ***********************************
+#include "commonHeader.h"
 
-//******************************* Global Types ********************************* 
+//*************************** Global Types ************************************* 
 
+//************************* Global Constants *********************************** 
 
-//***************************** Global Constants ******************************* 
+//************************* Global Variables *********************************** 
 
-//***************************** Global Variables ******************************* 
-
-//**************************** Forward Declarations **************************** 
-bool fileOperationOpen(FILE **pstFile, int8 *cFileName, int8 *cMode);
+//************************* Forward Declarations ******************************* 
+bool fileOperationOpen(FILE **pstFile, const char *pcFileName, 
+                       const char *pcMode);
 bool fileOperationClose(FILE **ppstFile);
-bool fileOperationOpenwithFseek(FILE **ppstFile, int8 *cFileName, int8 *cMode);
-bool fileOperationFread(int8 *stDeviceInfo, int8 cSize, int8 cCount, 
-                        FILE *pstFile);
-bool fileOperationWrite(int8 cSize, int8 cCount, FILE *pstFile, 
-                        int8 *pstcurrent);
-
-//*********************** Inline Method Implementations ************************ 
+bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName);
+bool fileOperationFread(void *stDeviceInfo, uint8 cSize, FILE **ppstFile);
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pstcurrent);
+bool fileOperationReadwithFseek(FILE **ppstFile, const char *pcFileName);
+bool fileOperationFseek(FILE **ppstFile, uint8 cOffset, uint8 cPosition);
+                        
+//********************** Inline Method Implementations ************************* 
 
 #endif 
-// _FILEOPERATION_H_ 
-// EOF 
 
+// FILEOPERATION_H 
+// EOF

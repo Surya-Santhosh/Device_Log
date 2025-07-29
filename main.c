@@ -1,4 +1,4 @@
-//********************************** main **************************************
+//******************************** main ****************************************
 // Copyright (c) 2025 Trenser Technology Solutions
 // All Rights Reserved
 //******************************************************************************
@@ -10,20 +10,21 @@
 // Day     : 14/July/2025
 //******************************************************************************
 
-//******************************* Include Files ********************************
-#include "common.h"
+//**************************** Include Files ***********************************
+#include "commonHeader.h"
 #include "devicelog.h"
 #include "fileOperation.h"
+#include "memmoryHandle.h"
 
 //******************************* Local Types **********************************
 
 //***************************** Local Constants ********************************
 
-//***************************** Local Variables ********************************
+//**************************** Local Variables *********************************
 
-//****************************** Local Functions *******************************
+//***************************** Local Functions ********************************
 
-//******************************.mainFunction.**********************************
+//*****************************.mainFunction.***********************************
 // Purpose : Store and access device information using a linked list and 
 //           binary file.Supports add, search, delete, and display operations.
 // Inputs  : none
@@ -35,27 +36,13 @@ int main()
 {
     NODE *pstHead = NULL;
     FILE *pstFile = NULL;
-    uint8 ucChoice = 'y';
 
-    if (true == devicelogReadFromFile(&pstHead, &pstFile))
+    if (true != devicelogManager(&pstHead, &pstFile))
     {
-        while ((ucChoice == 'y') || (ucChoice == 'Y'))
-        {
-            if (true == devicelogManager(&pstHead, &pstFile))
-            {
-                printf("\nIf you want to continue (Y/N): ");
-                while(getchar() != '\n');
-                scanf("%c", &ucChoice);
-
-                printf("\x1b[H"); // Move Cursor to top-left
-                printf("\x1b[J"); // clear screen
-            }
-        }
+        printf("Device Manger failed.");
     }
-
-    devicelogFreeList (&pstHead);
 
     return 0;
 }
-// EOF
 
+// EOF

@@ -3,5 +3,5 @@
 *.s
 *.vscode
 *.bin
-
+*UID.txt
 

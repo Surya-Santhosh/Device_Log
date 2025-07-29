@@ -1,20 +1,18 @@
-//***************************** DeviceLog **************************************
+//****************************** memmoryHandle *********************************
 // Copyright (c) 2025 Trenser Technology Solutions
 // All Rights Reserved 
 //******************************************************************************
 //
-// Summary : Store and update device information using a linked list and a 
-//           binary file.
+// Summary : Wraper function for file operation such as fopen, fclose, fread, 
+//           fwrite, fseek.
 // Note    : None
 // 
 //******************************************************************************
-#ifndef DEVICELOG_H
-#define DEVICELOG_H
+#ifndef MEMMORYHANDLE_H
+#define MEMMORYHANDLE_H
 
 //**************************** Include Files ***********************************
 #include "commonHeader.h"
-#include "memmoryHandle.h"
-#include "fileOperation.h"
 
 //*************************** Global Types ************************************* 
 
@@ -23,11 +21,12 @@
 //************************* Global Variables *********************************** 
 
 //************************* Forward Declarations ******************************* 
-bool devicelogManager(NODE **ppstHead, FILE **ppstFile);
+bool memmoryHandleAllocation(NODE **pstNewNode);
+bool memmoryHandleDeallocation(NODE **pstNewNode);
 
-//********************** Inline Method Implementations *************************
+//********************** Inline Method Implementations ************************* 
 
 #endif 
 
-// DEVICELOG_H 
+// FILEOPERATION_H 
 // EOF
