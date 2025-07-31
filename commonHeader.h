@@ -17,8 +17,8 @@
 typedef struct DEVICE_INFO
 {
     uint16 unUID;
-    uint8 unDeviceID;
-    uint8 unVendorID;
+    uint16 unDeviceID;
+    uint16 unVendorID;
     int8 ucName[MAX_CHAR_SIZE];
     int8 ucState[MAX_CHAR_SIZE];
 }DEVICE_INFO;

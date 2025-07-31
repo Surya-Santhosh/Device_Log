@@ -133,7 +133,7 @@ static bool devicelogAddToList(NODE **ppstHead, DEVICE_INFO stDeviceInfo)
     {
         if (true == memmoryHandleAllocation(&pstNewNode))
         {
-            if (pstNewNode != NULL)
+            if (NULL != pstNewNode)
             {
                 pstNewNode->stDeviceInfo = stDeviceInfo;
                 pstNewNode->pstNext = *ppstHead;
@@ -156,17 +156,17 @@ static bool devicelogAddToList(NODE **ppstHead, DEVICE_INFO stDeviceInfo)
 //******************************************************************************
 static bool devicelogGetDeviceFromUser(DEVICE_INFO *pstDeviceInfo)
 {
-    int8 *pState[] = {STATE_DISABLED, STATE_NOT_CONNECTED, STATE_RUNNING};
+    const int8 *pState[] = {STATE_DISABLED, STATE_NOT_CONNECTED, STATE_RUNNING};
     uint8 ucStateInput = 0;
-    uint8 ucFlagVentorID = 0;
     uint8 ucFlagState = 0;
+    uint8 ucFlagVentorID = 0;
     bool blResult = false;
 
     if (NULL != pstDeviceInfo)
     {
         printf("Enter VendorID : ");
 
-        ucFlagVentorID = scanf("%hhu", &pstDeviceInfo->unVendorID);
+        ucFlagVentorID = scanf("%hu", &pstDeviceInfo->unVendorID);
 
         while (NEWLINE_CHARACTER != getchar());
 
@@ -189,7 +189,7 @@ static bool devicelogGetDeviceFromUser(DEVICE_INFO *pstDeviceInfo)
 
             printf("Enter State(0: Disabled, 1: Not Connected, 2: Running): ");
 
-            ucFlagState = scanf("%hhd", &ucStateInput);
+            ucFlagState = scanf("%hhu", &ucStateInput);
 
             while (NEWLINE_CHARACTER != getchar());
 
@@ -245,7 +245,7 @@ static bool devicelogIsDeviceIDExist(NODE *pstHead, uint8 ucDeviceID)
 static bool devicelogGetDeviceInfo(NODE **ppstHead)
 {
     bool blResult = false;
-    uint8 ucNewDeviceID = 0;
+    uint16 ucNewDeviceID = 0;
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
     uint8 ucFlag = 0;
@@ -263,7 +263,7 @@ static bool devicelogGetDeviceInfo(NODE **ppstHead)
                 printf("\nDevice details\n");
                 printf("\nEnter DeviceID : ");
 
-                ucFlag = scanf("%hhu", &ucNewDeviceID);
+                ucFlag = scanf("%hu", &ucNewDeviceID);
 
                 while (NEWLINE_CHARACTER != getchar());
 
@@ -311,11 +311,11 @@ static bool devicelogFileUpdate(NODE **ppstHead, FILE **ppstFile)
     NODE *pstcurrent = *ppstHead;
     int8 cSize = sizeof(DEVICE_INFO);
 
-    if ((NULL != ppstHead) && (NULL != ppstFile))
+    if ((NULL != *ppstHead) && (NULL != *ppstFile))
     {
         if (true == fileOperationAppendandWrite(ppstFile, BIN_FILENAME))
         {
-            while (pstcurrent != NULL)
+            while (NULL != pstcurrent)
             {
                 if (true == fileOperationFseek(ppstFile, 0, SEEK_END))
                 {
@@ -376,14 +376,14 @@ static bool devicelogSearchFromList(NODE **ppstHead, FILE **ppstFile)
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
     uint8 ucdataFound = 0; 
-    uint8 unSearchDeviceID = 0;
+    uint16 unSearchDeviceID = 0;
     uint8 ucFlag = 0;
     NODE *pstCurrent = NULL;
 
     if ((NULL != ppstHead) && (NULL != ppstFile))
     {
         printf("\nEnter the number of Devices to search : ");
-        scanf("%hhd", &ucNumberofDevices);
+        scanf("%hhu", &ucNumberofDevices);
 
         for (ucIndex = 0; ucIndex < ucNumberofDevices; ucIndex++)
         {
@@ -391,7 +391,7 @@ static bool devicelogSearchFromList(NODE **ppstHead, FILE **ppstFile)
             ucdataFound = 0;
 
             printf("\nEnter DeviceID : ");
-            ucFlag = scanf("%hhu", &unSearchDeviceID);
+            ucFlag = scanf("%hu", &unSearchDeviceID);
 
             while ('\n' != getchar());
         
@@ -404,7 +404,7 @@ static bool devicelogSearchFromList(NODE **ppstHead, FILE **ppstFile)
                 continue;
             }
 
-            while (pstCurrent != NULL)
+            while (NULL != pstCurrent)
             {
                 if (pstCurrent->stDeviceInfo.unDeviceID == unSearchDeviceID)
                 {
@@ -449,7 +449,7 @@ static bool devicelogDeleteFromList(NODE **ppstHead, FILE **ppstFile)
     bool blResult = false;
     uint8 ucNumberofDevices = 0;
     uint8 ucIndex = 0;
-    uint8 unDeleteDeviceID = 0;
+    uint16 unDeleteDeviceID = 0;
     uint8 ucdataFound = 0; 
     uint8 ucFlag = 0;
     NODE *pstCurrent = NULL;
@@ -458,7 +458,7 @@ static bool devicelogDeleteFromList(NODE **ppstHead, FILE **ppstFile)
     if (NULL != ppstHead && NULL != ppstFile)
     {
         printf("\nEnter the number of Devices to delete : ");
-        scanf("%hhd", &ucNumberofDevices);
+        scanf("%hhu", &ucNumberofDevices);
 
         for (ucIndex = 0; ucIndex < ucNumberofDevices; ucIndex++)
         {
@@ -467,7 +467,7 @@ static bool devicelogDeleteFromList(NODE **ppstHead, FILE **ppstFile)
             ucdataFound = 0; 
 
             printf("\nEnter DeviceID : ");
-            ucFlag = scanf("%hhu", &unDeleteDeviceID);
+            ucFlag = scanf("%hu", &unDeleteDeviceID);
 
             while (NEWLINE_CHARACTER != getchar());
         
@@ -521,7 +521,7 @@ static bool devicelogDeleteFromList(NODE **ppstHead, FILE **ppstFile)
                 
                 blResult = true;
             }
-            else if(true == devicelogFileUpdate(ppstHead,ppstFile))
+            else if(true == devicelogFileUpdate(ppstHead, ppstFile))
             {
                 blResult = true;
             }
@@ -596,7 +596,7 @@ static bool devicelogFreeList(NODE **ppstHead)
     NODE *pstCurrent = *ppstHead;
     NODE *pstTemp = NULL;
 
-    if (NULL != ppstHead)
+    if (NULL != *ppstHead)
     {
         while (NULL != pstCurrent)
         {
@@ -719,7 +719,7 @@ static bool devicelogHandleUserOptions(NODE **ppstHead, FILE **ppstFile)
 
             printf("\nEnter your choice : ");
 
-            ucFlag = scanf("%hhd", &ucOperation);
+            ucFlag = scanf("%hhu", &ucOperation);
 
             while (NEWLINE_CHARACTER != getchar());
 

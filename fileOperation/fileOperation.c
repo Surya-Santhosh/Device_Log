@@ -37,7 +37,7 @@ bool fileOperationOpen(FILE **ppstFile, const char *pcFileName,
 
     *ppstFile = fopen(pcFileName, pcMode);
 
-    if (NULL == ppstFile)
+    if (NULL == *ppstFile)
     {
         printf("Unable to open file.\n");
     }
@@ -143,7 +143,7 @@ bool fileOperationFread(void *pBuffer, uint8 cSize, FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pBuffer)
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, const void *pBuffer)
 {
     bool blResult = false;
     uint16 ucWriteCount = 0;

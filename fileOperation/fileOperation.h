@@ -26,7 +26,7 @@ bool fileOperationOpen(FILE **pstFile, const char *pcFileName,
 bool fileOperationClose(FILE **ppstFile);
 bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName);
 bool fileOperationFread(void *stDeviceInfo, uint8 cSize, FILE **ppstFile);
-bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pstcurrent);
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, const void *pBuffer);
 bool fileOperationReadwithFseek(FILE **ppstFile, const char *pcFileName);
 bool fileOperationFseek(FILE **ppstFile, uint8 cOffset, uint8 cPosition);
                         
