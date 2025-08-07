@@ -30,8 +30,7 @@
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationOpen(FILE **ppstFile, const char *pcFileName, 
-                       const char *pcMode)
+bool fileOperationOpen(FILE **ppstFile, char *pcFileName, char *pcMode)
 {
     bool blResult = false;
 
@@ -143,7 +142,7 @@ bool fileOperationFread(void *pBuffer, uint8 cSize, FILE **ppstFile)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationWrite(uint8 cSize, FILE *pstFile, const void *pBuffer)
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pBuffer)
 {
     bool blResult = false;
     uint16 ucWriteCount = 0;
@@ -165,34 +164,6 @@ bool fileOperationWrite(uint8 cSize, FILE *pstFile, const void *pBuffer)
     return blResult;
 }
 
-//*******************.fileOperationAppendandWrite.******************************
-// Purpose : Append data from binary file then open with write mode.
-// Inputs  : pstFile - Pointer to the binary file.
-//         : pcFileName -  Name of the file to be opened.
-// Outputs : None
-// Return  : blResult
-// Notes   : None
-//******************************************************************************
-bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName)
-{
-    bool blResult = false;
-
-    if (true == fileOperationOpen(ppstFile, pcFileName, APPEND_MODE))
-    {
-        if (true != fileOperationClose(ppstFile))
-        {
-            printf("Failed to open file in append mode.\n");
-        }
-    }
-
-    if (true == fileOperationOpen(ppstFile, pcFileName, WRITE_MODE))
-    {
-        blResult = true;
-    }
-
-    return blResult;
-}
-
 //*******************.fileOperationReadwithFseek********************************
 // Purpose : To open binary file with read mode and reset the file pointer.
 // Inputs  : pstFile - Pointer to the binary file.
@@ -201,7 +172,7 @@ bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationReadwithFseek(FILE **ppstFile, const char *pcFileName)
+bool fileOperationReadwithFseek(FILE **ppstFile, char *pcFileName)
 {
     bool blResult = false;
 

@@ -7,9 +7,9 @@ include_directories(${CMAKE_SOURCE_DIR}/)
 
 add_executable(DeviceLog_gcc 
                ${CMAKE_SOURCE_DIR}/main.c
-               ${CMAKE_SOURCE_DIR}/devicelog.c
-               ${CMAKE_SOURCE_DIR}/fileOperation.c
-               ${CMAKE_SOURCE_DIR}/memmoryHandle.c)
+               ${CMAKE_SOURCE_DIR}/devicelog/devicelog.c
+               ${CMAKE_SOURCE_DIR}/fileOperation/fileOperation.c
+               ${CMAKE_SOURCE_DIR}/memmoryHandle/memmoryHandle.c)
               
 
 # List executable files in release folder
@@ -23,9 +23,9 @@ set_target_properties(DeviceLog_gcc PROPERTIES
 # List debug files in debug folder
 add_executable(DeviceLog_Debug 
                ${CMAKE_SOURCE_DIR}/main.c
-               ${CMAKE_SOURCE_DIR}/devicelog.c
-               ${CMAKE_SOURCE_DIR}/fileOperation.c
-               ${CMAKE_SOURCE_DIR}/memmoryHandle.c)
+               ${CMAKE_SOURCE_DIR}/devicelog/devicelog.c
+               ${CMAKE_SOURCE_DIR}/fileOperation/fileOperation.c
+               ${CMAKE_SOURCE_DIR}/memmoryHandle/memmoryHandle.c)
 
 target_compile_options(DeviceLog_Debug PRIVATE -g -O0 -c -fanalyzer)
 

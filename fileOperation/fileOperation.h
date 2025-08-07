@@ -21,13 +21,11 @@
 //************************* Global Variables *********************************** 
 
 //************************* Forward Declarations ******************************* 
-bool fileOperationOpen(FILE **pstFile, const char *pcFileName, 
-                       const char *pcMode);
+bool fileOperationOpen(FILE **pstFile, char *pcFileName, char *pcMode);
 bool fileOperationClose(FILE **ppstFile);
-bool fileOperationAppendandWrite(FILE **ppstFile, const char *pcFileName);
 bool fileOperationFread(void *stDeviceInfo, uint8 cSize, FILE **ppstFile);
-bool fileOperationWrite(uint8 cSize, FILE *pstFile, const void *pBuffer);
-bool fileOperationReadwithFseek(FILE **ppstFile, const char *pcFileName);
+bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pBuffer);
+bool fileOperationReadwithFseek(FILE **ppstFile, char *pcFileName);
 bool fileOperationFseek(FILE **ppstFile, uint8 cOffset, uint8 cPosition);
                         
 //********************** Inline Method Implementations ************************* 

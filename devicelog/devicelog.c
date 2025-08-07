@@ -311,19 +311,16 @@ static bool devicelogFileUpdate(NODE **ppstHead, FILE **ppstFile)
     NODE *pstcurrent = *ppstHead;
     int8 cSize = sizeof(DEVICE_INFO);
 
-    if ((NULL != *ppstHead) && (NULL != *ppstFile))
+    if ((NULL != ppstHead) && (NULL != ppstFile))
     {
-        if (true == fileOperationAppendandWrite(ppstFile, BIN_FILENAME))
+        if (true == fileOperationOpen(ppstFile, BIN_FILENAME, WRITE_MODE))
         {
             while (NULL != pstcurrent)
             {
-                if (true == fileOperationFseek(ppstFile, 0, SEEK_END))
+                if (true == fileOperationWrite(cSize, *ppstFile, 
+                                               pstcurrent))
                 {
-                    if (true == fileOperationWrite(cSize, *ppstFile, 
-                                                   pstcurrent))
-                    {
-                        pstcurrent = pstcurrent->pstNext;
-                    }
+                    pstcurrent = pstcurrent->pstNext;
                 }
             }
 
@@ -352,10 +349,12 @@ static bool devicelogAddNew(NODE **ppstHead, FILE **ppstFile)
 
     if ((NULL != ppstHead) && (NULL != ppstFile))
     {
-        if (true == devicelogGetDeviceInfo(ppstHead) && 
-            true == devicelogFileUpdate(ppstHead,ppstFile))
+        if (true == devicelogGetDeviceInfo(ppstHead))
         {
-            blResult = true;
+            if (true == devicelogFileUpdate(ppstHead,ppstFile))
+            {
+                blResult = true;
+            }
         }
     }
 
