@@ -317,8 +317,7 @@ static bool devicelogFileUpdate(NODE **ppstHead, FILE **ppstFile)
         {
             while (NULL != pstcurrent)
             {
-                if (true == fileOperationWrite(cSize, *ppstFile, 
-                                               pstcurrent))
+                if (true == fileOperationWrite(cSize, *ppstFile, pstcurrent))
                 {
                     pstcurrent = pstcurrent->pstNext;
                 }
@@ -351,7 +350,7 @@ static bool devicelogAddNew(NODE **ppstHead, FILE **ppstFile)
     {
         if (true == devicelogGetDeviceInfo(ppstHead))
         {
-            if (true == devicelogFileUpdate(ppstHead,ppstFile))
+            if (true == devicelogFileUpdate(ppstHead, ppstFile))
             {
                 blResult = true;
             }
@@ -520,7 +519,7 @@ static bool devicelogDeleteFromList(NODE **ppstHead, FILE **ppstFile)
                 
                 blResult = true;
             }
-            else if(true == devicelogFileUpdate(ppstHead, ppstFile))
+            else if (true == devicelogFileUpdate(ppstHead, ppstFile))
             {
                 blResult = true;
             }

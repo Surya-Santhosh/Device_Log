@@ -34,15 +34,18 @@ bool fileOperationOpen(FILE **ppstFile, char *pcFileName, char *pcMode)
 {
     bool blResult = false;
 
-    *ppstFile = fopen(pcFileName, pcMode);
+    if ((NULL != ppstFile) && (NULL != pcFileName) && (NULL != pcMode))
+    {
+        *ppstFile = fopen(pcFileName, pcMode);
 
-    if (NULL == *ppstFile)
-    {
-        printf("Unable to open file.\n");
-    }
-    else
-    {
-        blResult = true;
+        if (NULL == *ppstFile)
+        {
+            printf("Unable to open file.\n");
+        }
+        else
+        {
+            blResult = true;
+        }
     }
 
     return blResult;
@@ -108,8 +111,7 @@ bool fileOperationFseek(FILE **ppstFile, uint8 cOffset, uint8 cPosition)
 // Purpose : To read the data from the binary file.
 // Inputs  : ppstFile - Pointer to the binary file 
 //         : pBuffer  - Structure containing device information.
-//         : cSize - The size in bytes of each element to be read.
-//         : cCount - The number of elements to read.
+//         : cSize - The number of elements to read.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
@@ -121,9 +123,9 @@ bool fileOperationFread(void *pBuffer, uint8 cSize, FILE **ppstFile)
 
     if (NULL != ppstFile && NULL != pBuffer)
     {
-        ucReadCount = fread(pBuffer, cSize, WRITE_COUNT, *ppstFile);
+        ucReadCount = fread(pBuffer, READ_COUNT, cSize, *ppstFile);
 
-        if (WRITE_COUNT == ucReadCount)
+        if (cSize == ucReadCount)
         {
             blResult = true;
         }
@@ -137,7 +139,6 @@ bool fileOperationFread(void *pBuffer, uint8 cSize, FILE **ppstFile)
 // Inputs  : pstFile - Pointer to the binary file 
 //         : pBuffer  - Structure containing device information.
 //         : cSize - The size in bytes of each element to be read.
-//         : cCount - The number of elements to read.
 // Outputs : None
 // Return  : blResult
 // Notes   : None
@@ -172,20 +173,20 @@ bool fileOperationWrite(uint8 cSize, FILE *pstFile, void *pBuffer)
 // Return  : blResult
 // Notes   : None
 //******************************************************************************
-bool fileOperationReadwithFseek(FILE **ppstFile, char *pcFileName)
-{
-    bool blResult = false;
+// bool fileOperationReadwithFseek(FILE **ppstFile, char *pcFileName)
+// {
+//     bool blResult = false;
 
-    if (true == fileOperationOpen(ppstFile, pcFileName, READ_MODE))
-    {
-        if (true == fileOperationFseek(ppstFile, 0, SEEK_SET))
-        {
-            blResult = true;
-        }
-    }
+//     if (true == fileOperationOpen(ppstFile, pcFileName, READ_MODE))
+//     {
+//         if (true == fileOperationFseek(ppstFile, 0, SEEK_SET))
+//         {
+//             blResult = true;
+//         }
+//     }
 
-    return blResult;
-}
+//     return blResult;
+// }
 
 
 //EOF
